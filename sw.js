@@ -1,5 +1,5 @@
 /* Rotina - service worker */
-const VERSAO = "1.1.0";
+const VERSAO = "1.2.0";
 const CACHE = "rotina-" + VERSAO;
 const NUCLEO = [
   "./",
