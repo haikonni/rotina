@@ -546,7 +546,7 @@ async function installApp(){
   document.getElementById("installBanner").classList.remove("show");
 }
 function dismissInstall(){document.getElementById("installBanner").classList.remove("show");localStorage.setItem("rot-install-dismissed",Date.now())}
-function updateApp(){
+async function updateApp(){
   if("serviceWorker" in navigator){
     const reg=await navigator.serviceWorker.ready;
     reg.update();document.getElementById("updateBanner").classList.remove("show");
