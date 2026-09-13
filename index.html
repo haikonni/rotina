@@ -128,8 +128,6 @@ body.light{
   color:var(--bg);background:linear-gradient(135deg,var(--accent),var(--accent-strong));
   box-shadow:0 2px 8px rgba(34,211,238,.4);transform:translateY(-1px)
 }
-.tab .dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:background var(--transition)}
-.tab.active .dot{background:var(--bg)}
 .tab .count{font-size:.55rem;font-weight:700;font-family:var(--font-mono);opacity:.7}
 
 /* Cards */
@@ -411,11 +409,11 @@ tr:hover td{background:var(--bg-hover)}
   </div>
 
   <nav class="tabs" role="tablist" aria-label="Abas principais" id="tabs">
-    <button class="tab active" role="tab" data-tab="hoje" aria-selected="true" aria-controls="a-hoje"><span>Hoje</span><span class="dot"></span></button>
-    <button class="tab" role="tab" data-tab="check" aria-selected="false" aria-controls="a-check"><span>Checklist</span><span class="dot"></span><span class="count" id="checkCount">0/8</span></button>
-    <button class="tab" role="tab" data-tab="treino" aria-selected="false" aria-controls="a-treino"><span>Treino</span><span class="dot"></span></button>
-    <button class="tab" role="tab" data-tab="escola" aria-selected="false" aria-controls="a-escola"><span>Escola</span><span class="dot"></span></button>
-    <button class="tab" role="tab" data-tab="celular" aria-selected="false" aria-controls="a-celular"><span>Celular</span><span class="dot"></span></button>
+    <button class="tab active" role="tab" data-tab="hoje" aria-selected="true" aria-controls="a-hoje"><span>Hoje</span></button>
+    <button class="tab" role="tab" data-tab="check" aria-selected="false" aria-controls="a-check"><span>Checklist</span><span class="count" id="checkCount">0/8</span></button>
+    <button class="tab" role="tab" data-tab="treino" aria-selected="false" aria-controls="a-treino"><span>Treino</span></button>
+    <button class="tab" role="tab" data-tab="escola" aria-selected="false" aria-controls="a-escola"><span>Escola</span></button>
+    <button class="tab" role="tab" data-tab="celular" aria-selected="false" aria-controls="a-celular"><span>Celular</span></button>
   </nav>
 
   <!-- HOJE -->
