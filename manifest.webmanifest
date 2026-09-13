@@ -1,0 +1,49 @@
+{
+  "name": "Rotina • Alencar",
+  "short_name": "Rotina",
+  "description": "Sua rotina diária: linha do tempo, checklist, treino progressivo, horário escolar e controle do celular.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "id": "rotina-alencar",
+  "display": "standalone",
+  "background_color": "#0b0f1a",
+  "theme_color": "#06b6d4",
+  "categories": ["productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Checklist de hoje",
+      "short_name": "Checklist",
+      "description": "Marcar o que já fez hoje",
+      "url": "./index.html#check",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Treino do dia",
+      "short_name": "Treino",
+      "description": "Ver exercícios programados",
+      "url": "./index.html#treino",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
