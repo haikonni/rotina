@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Rotina • Alencar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0f1a; --bg-elev:#111827; --bg-card:#161f33; --bg-hover:#1e2a44;
+  --fg:#f1f5f9; --fg-muted:#94a3b8; --fg-sub:#64748b;
+  --accent:#22d3ee; --accent-weak:#06b6d4; --accent-strong:#0891b2;
+  --warn:#fbbf24; --warn-weak:#f59e0b; --ok:#34d399; --ok-weak:#10b981;
+  --err:#f87171; --border:#1f2937; --border-light:#334155;
+  --shadow:0 8px 32px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.3);
+  --shadow-sm:0 2px 8px rgba(0,0,0,.3);
+  --radius:16px; --radius-sm:10px; --radius-pill:999px;
+  --space:16px; --space-sm:8px; --space-xs:4px; --space-lg:24px;
+  --font-sans:'Inter',system-ui,sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --transition:160ms cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:var(--font-sans);background:var(--bg);color:var(--fg);
+  min-height:100vh;line-height:1.5;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%,rgba(34,211,238,.06),transparent),
+    radial-gradient(ellipse 60% 40% at 100% 100%,rgba(52,211,153,.04),transparent);
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Layout */
+.app{max-width:480px;margin:0 auto;padding:calc(var(--space)*2) var(--space) calc(var(--space)*3);min-height:100vh;display:flex;flex-direction:column}
+
+/* Header */
+.header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space);margin-bottom:calc(var(--space)*1.5);padding-bottom:var(--space);border-bottom:1px solid var(--border);position:relative}
+.header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.3}
+.greeting{flex:1}
+.greeting .day{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin-bottom:2px}
+.greeting .date{font-size:.8rem;color:var(--fg-sub);font-weight:500}
+.greeting h1{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,var(--fg),var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--ok));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#0b0f1a;flex-shrink:0;box-shadow:0 4px 16px rgba(34,211,238,.3)}
+
+/* Tabs */
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:var(--space-lg);position:relative}
+.tabs::before{content:'';position:absolute;inset:4px;border-radius:10px;background:var(--bg);z-index:0}
+.tab{position:relative;z-index:1;padding:10px 6px;border:none;background:transparent;color:var(--fg-sub);font-family:var(--font-sans);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;border-radius:8px;transition:color var(--transition),transform var(--transition);display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab:hover{color:var(--fg)}
+.tab.active{color:var(--bg);background:linear-gradient(135deg,var(--accent),var(--accent-strong));box-shadow:0 2px 8px rgba(34,211,238,.4);transform:translateY(-1px)}
+.tab .dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background var(--transition)}
+.tab.active .dot{background:var(--bg)}
+.tab .count{font-size:.6rem;font-weight:700;font-family:var(--font-mono);opacity:.7}
+
+/* Cards */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-lg);margin-bottom:var(--space);box-shadow:var(--shadow-sm);transition:transform var(--transition),border-color var(--transition),box-shadow var(--transition);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity var(--transition)}
+.card:hover{border-color:var(--border-light);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card:hover::before{opacity:1}
+.card:last-child{margin-bottom:0}
+.card.hidden{display:none!important}
+.card-header{display:flex;align-items:center;justify-content:space-between;gap:var(--space);margin-bottom:var(--space);padding-bottom:var(--space);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.card-title{font-size:1rem;font-weight:700;color:var(--fg);display:flex;align-items:center;gap:var(--space-sm)}
+.card-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.icon-accent{background:rgba(34,211,238,.15);color:var(--accent)}
+.icon-warn{background:rgba(251,191,36,.15);color:var(--warn)}
+.icon-ok{background:rgba(52,211,153,.15);color:var(--ok)}
+.icon-err{background:rgba(248,113,113,.15);color:var(--err)}
+
+/* Timeline */
+.timeline{display:flex;flex-direction:column;gap:0}
+.timeline-item{display:flex;gap:var(--space);padding:var(--space-sm) 0;position:relative;transition:all var(--transition)}
+.timeline-item::before{content:'';position:absolute;left:22px;top:42px;bottom:0;width:1px;background:var(--border);transition:background var(--transition)}
+.timeline-item:last-child::before{display:none}
+.timeline-item.current::before{background:var(--accent)}
+.timeline-item.current .time{color:var(--accent)}
+.timeline-item.current .dot{background:var(--accent);box-shadow:0 0 0 3px rgba(34,211,238,.2)}
+.timeline-item.past .label{color:var(--fg-sub)}
+.timeline-item.past .dot{background:var(--ok);box-shadow:0 0 0 3px rgba(52,211,153,.2)}
+.time{font-family:var(--font-mono);font-size:.7rem;font-weight:700;color:var(--warn);min-width:56px;padding-top:2px}
+.timeline-content{flex:1;padding-top:2px}
+.timeline-content .label{font-size:.82rem;font-weight:500;color:var(--fg);margin-bottom:2px}
+.timeline-content .meta{font-size:.7rem;color:var(--fg-sub);font-weight:400}
+.dot{position:absolute;left:17px;top:6px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg-card);background:var(--border);z-index:1;transition:all var(--transition);flex-shrink:0}
+
+/* Checklist */
+.progress-ring{width:56px;height:56px;transform:rotate(-90deg);flex-shrink:0}
+.progress-ring-bg{fill:none;stroke:var(--border);stroke-width:4}
+.progress-ring-fill{fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round;stroke-dasharray:158;stroke-dashoffset:158;transition:stroke-dashoffset .4s var(--transition)}
+.checklist{display:flex;flex-direction:column;gap:var(--space-xs)}
+.check-item{display:flex;align-items:center;gap:var(--space);padding:var(--space-sm) var(--space);background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition);position:relative;overflow:hidden}
+.check-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);transform:scaleY(0);transform-origin:bottom;transition:transform var(--transition)}
+.check-item:hover{border-color:var(--border-light);background:var(--bg-hover)}
+.check-item.done{border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.05)}
+.check-item.done::before{transform:scaleY(1)}
+.check-item.done .check-label{color:var(--fg-sub);text-decoration:line-through}
+.check-item.done .check-box{border-color:var(--ok);background:var(--ok)}
+.check-box{width:24px;height:24px;border:2px solid var(--border-light);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--transition);background:var(--bg)}
+.check-box svg{width:14px;height:14px;stroke:var(--bg);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;transform:scale(0);transition:transform 120ms cubic-bezier(.34,1.56,.64,1);color:var(--ok)}
+.check-item.done .check-box svg{transform:scale(1)}
+.check-label{font-size:.82rem;font-weight:500;color:var(--fg);flex:1;transition:color var(--transition)}
+.check-meta{font-size:.65rem;color:var(--fg-sub);font-family:var(--font-mono);font-weight:500;white-space:nowrap}
+
+/* Progress text */
+.progress-text{display:flex;align-items:center;justify-content:space-between;margin-top:var(--space);padding-top:var(--space);border-top:1px solid var(--border)}
+.progress-stat{font-size:.75rem;color:var(--fg-sub)}
+.progress-stat strong{font-size:1.1rem;color:var(--accent);font-weight:700;font-family:var(--font-mono)}
+
+/* Train cards */
+.train-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-sm)}
+.train-card{background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--radius-sm);padding:var(--space);transition:all var(--transition)}
+.train-card:hover{border-color:var(--border-light);transform:translateY(-1px)}
+.train-card.current{border-color:var(--accent);background:rgba(34,211,238,.05);box-shadow:0 0 0 1px var(--accent)}
+.train-card .train-day{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-sub);margin-bottom:4px}
+.train-card .train-type{font-size:.7rem;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.train-card .train-time{font-family:var(--font-mono);font-size:.65rem;color:var(--fg-sub);font-weight:500}
+
+/* School table */
+.table-wrap{overflow-x:auto;margin:-var(--space-sm) calc(-1*var(--space-sm));padding:var(--space-sm)}
+table{width:100%;border-collapse:collapse;font-size:.72rem}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+th{font-weight:700;color:var(--warn);background:var(--bg-elev);font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;position:sticky;top:0;z-index:1}
+td{font-weight:500;color:var(--fg);font-size:.7rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg-hover)}
+.subject-main{color:var(--accent);font-weight:600}
+.subject-teacher{color:var(--fg-sub);font-size:.62rem;font-weight:400;display:block;margin-top:1px}
+
+/* Footer actions */
+.btn{width:100%;padding:14px 20px;border:none;border-radius:var(--radius-sm);font-family:var(--font-sans);font-size:.85rem;font-weight:700;cursor:pointer;transition:all var(--transition);display:flex;align-items:center;justify-content:center;gap:var(--space-sm);margin-top:var(--space-sm)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-strong));color:#0b0f1a;box-shadow:0 4px 16px rgba(34,211,238,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(34,211,238,.4)}
+.btn-primary:active{transform:translateY(0)}
+.btn-ghost{background:var(--bg-elev);color:var(--fg);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg-hover);border-color:var(--border-light)}
+
+/* Stats bar */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-sm);margin-bottom:var(--space)}
+.stat{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:var(--space) var(--space-sm);text-align:center}
+.stat-value{font-family:var(--font-mono);font-size:1.25rem;font-weight:800;color:var(--accent);line-height:1.2}
+.stat-label{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-sub);margin-top:2px}
+
+/* Animations */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.card{animation:fadeInUp .4s var(--transition) backwards}
+.card:nth-child(1){animation-delay:0ms}
+.card:nth-child(2){animation-delay:60ms}
+.card:nth-child(3){animation-delay:120ms}
+.card:nth-child(4){animation-delay:180ms}
+
+/* Focus visible */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--fg-sub)}
+
+/* Empty state */
+.empty{text-align:center;padding:calc(var(--space)*3);color:var(--fg-sub)}
+.empty svg{width:48px;height:48px;margin-bottom:var(--space);opacity:.5}
+
+/* Print/export hint */
+.export-hint{font-size:.6rem;color:var(--fg-sub);text-align:center;margin-top:var(--space-lg);opacity:.6}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="greeting">
+      <div class="day" id="dayName">—</div>
+      <div class="date" id="todayDate">—</div>
+      <h1>Rotina</h1>
+    </div>
+    <div class="avatar" aria-hidden="true">A</div>
+  </header>
+
+  <div class="stats" id="statsBar" style="display:none">
+    <div class="stat"><div class="stat-value" id="streak">—</div><div class="stat-label">Dias</div></div>
+    <div class="stat"><div class="stat-value" id="weekPct">—</div><div class="stat-label">Semana</div></div>
+    <div class="stat"><div class="stat-value" id="best">—</div><div class="stat-label">Recorde</div></div>
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Abas principais">
+    <button class="tab" role="tab" data-tab="hoje" aria-selected="true"><span>Hoje</span><span class="dot"></span></button>
+    <button class="tab" role="tab" data-tab="check" aria-selected="false"><span>Checklist</span><span class="dot"></span><span class="count" id="checkCount">0/8</span></button>
+    <button class="tab" role="tab" data-tab="treino" aria-selected="false"><span>Treino</span><span class="dot"></span></button>
+    <button class="tab" role="tab" data-tab="escola" aria-selected="false"><span>Escola</span><span class="dot"></span></button>
+    <button class="tab" role="tab" data-tab="celular" aria-selected="false"><span>Celular</span><span class="dot"></span></button>
+  </nav>
+
+  <!-- HOJE -->
+  <section class="card" id="a-hoje" role="tabpanel" aria-labelledby="tab-hoje">
+    <div class="card-header">
+      <div class="card-title"><span class="card-icon icon-accent" aria-hidden="true">📅</span>Linha do dia</div>
+    </div>
+    <div class="timeline" id="timeline"><div class="loading">Carregando…</div></div>
+    <div class="card-header" style="margin-top:calc(var(--space)*1.5);border-top:1px solid var(--border);padding-top:var(--space)">
+      <div class="card-title"><span class="card-icon icon-warn" aria-hidden="true">🏫</span>Aulas de hoje</div>
+    </div>
+    <div id="aulas"><div class="loading">Carregando…</div></div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section class="card hidden" id="a-check" role="tabpanel" aria-labelledby="tab-check">
+    <div class="card-header">
+      <div class="card-title"><span class="card-icon icon-ok" aria-hidden="true">✅</span>Checklist</div>
+    </div>
+    <div class="progress-text">
+      <div class="progress-stat">Progresso: <strong id="progressPct">0%</strong></div>
+      <div class="progress-stat"><strong id="doneCount">0</strong> / <strong id="totalCount">8</strong></div>
+    </div>
+    <div class="checklist" id="cks"><div class="loading">Carregando…</div></div>
+    <button class="btn btn-ghost" onclick="clearToday()">Limpar hoje</button>
+  </section>
+
+  <!-- TREINO -->
+  <section class="card hidden" id="a-treino" role="tabpanel" aria-labelledby="tab-treino">
+    <div class="card-header">
+      <div class="card-title"><span class="card-icon icon-accent" aria-hidden="true">💪</span>Calistenia Progressiva</div>
+    </div>
+    <p style="font-size:.75rem;color:var(--fg-sub);margin-bottom:var(--space);line-height:1.5">Regra: 3 séries por exercício. Conseguiu 3×12 com forma boa → avança de nível na semana seguinte.</p>
+    <div class="train-grid" id="trainGrid"><div class="loading">Carregando…</div></div>
+    <div style="margin-top:var(--space);padding-top:var(--space);border-top:1px solid var(--border)">
+      <p style="font-size:.75rem;color:var(--fg-sub);margin-bottom:var(--space-sm)"><strong>Corrida</strong> (seg/qua/sex 08:30–09:00): alterne 2 min corre / 1 min anda até aguentar 30 min contínuo.</p>
+    </div>
+  </section>
+
+  <!-- ESCOLA -->
+  <section class="card hidden" id="a-escola" role="tabpanel" aria-labelledby="tab-escola">
+    <div class="card-header">
+      <div class="card-title"><span class="card-icon icon-warn" aria-hidden="true">📚</span>Horário Noturno</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Dia</th><th>1ª</th><th>2ª</th><th>3ª</th><th>4ª</th></tr>
+        </thead>
+        <tbody id="schoolBody"><tr><td colspan="5" class="loading">Carregando…</td></tr></tbody>
+      </table>
+    </div>
+    <p style="font-size:.7rem;color:var(--fg-sub);margin-top:var(--space);text-align:center">MAT 5×/sem • PORT 4×/sem — foco de revisão no bloco 10:00.</p>
+  </section>
+
+  <p class="export-hint">App roda offline • Dados salvos no navegador • Abra <code>http://127.0.0.1:8765</code> no celular na mesma rede <span id="versionTag" style="font-family:var(--font-mono);color:var(--accent);margin-left:8px">v1.1</span></p>
+</div>
+
+  <!-- CELULAR -->
+  <section class="card hidden" id="a-celular" role="tabpanel" aria-labelledby="tab-celular">
+    <div class="card-header">
+      <div class="card-title"><span class="card-icon icon-accent" aria-hidden="true">📱</span>Controle Celular</div>
+    </div>
+    <p style="font-size:.75rem;color:var(--fg-sub);margin-bottom:var(--space);line-height:1.5">Scripts Termux + Tasker (no celular) e ADB + scrcpy (no PC).</p>
+    <button class="btn btn-primary" onclick="runCelularAction('scrcpy')">Ver Tela (scrcpy)</button>
+    <button class="btn btn-ghost" onclick="runCelularAction('limpar-cache')">Limpar Cache</button>
+    <button class="btn btn-ghost" onclick="runCelularAction('relatorio')">Gerar Relatório de Apps</button>
+    <button class="btn btn-ghost" onclick="runCelularAction('tema-escuro-ativar')">Ativar Tema Escuro</button>
+    <button class="btn btn-ghost" onclick="runCelularAction('tema-escuro-desativar')">Desativar Tema Escuro</button>
+    <div id="celularOutput" style="margin-top:var(--space);font-family:var(--font-mono);font-size:.7rem;color:var(--fg)"></div>
+  </section>
+
+<div id="errorBanner" style="display:none;position:fixed;bottom:16px;left:16px;right:16px;max-width:480px;margin:0 auto;background:var(--err);color:#0b0f1a;padding:12px 16px;border-radius:12px;box-shadow:var(--shadow);font-size:.8rem;font-weight:600;z-index:9999"></div>
+
+<script>
+/* ===== ERROR HANDLER ===== */
+window.addEventListener("error",e=>{console.error("[Rotina] Error:",e.message,e.filename,e.lineno);showError(e.message)});
+window.addEventListener("unhandledrejection",e=>{console.error("[Rotina] Promise rejection:",e.reason);showError(e.reason?.message||String(e.reason))});
+function showError(msg){const b=document.getElementById("errorBanner");b.textContent="Erro JS: "+msg;b.style.display="block";setTimeout(()=>b.style.display="none",10000)}
+
+/* ===== DADOS ===== */
+const APP_VERSION = "1.1.0";
+console.log("[Rotina] Iniciando v"+APP_VERSION);
+const AULAS={
+  1:["ED. Digital — Gleisson","Química — Giordana","Português — Gabriela","Matemática — Bruna"],
+  2:["Biologia — Nadia","Geografia — Brunno","Matemática — Bruna","Inglês — Cida"],
+  3:["Português — Gabriela","Sociologia — Andre Lara","Arte — Adilson","Lit./Prot. — Cida"],
+  4:["Con. Matemática — Cristiane","Português — Gabriela","Matemática — Bruna","Filosofia — Osmar"],
+  5:["História — Rodrigo","Matemática — Bruna","Português — Gabriela","Física — Lauro"]
+};
+const DIAS=["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
+const BASE=[
+  ["06:00–08:00","Tempo com os pais + acordar + 1 copo d'água"],
+  ["07:30–08:00","Café (come o que tiver)"],
+  ["08:20","Banho manhã"],
+  ["10:00–10:50","Bloco estudo protegido"],
+  ["12:30","Almoço"],
+  ["17:00","Banho tarde + se arrumar"],
+  ["17:30","Comer (o que tiver)"],
+  ["18:40","Sai pra escola"],
+  ["19:00–22:20","Escola"],
+  ["22:50","Chega em casa"],
+  ["00:00","Dormir (seg–sex)"]
+];
+const DIA_TREINO={
+  1:["08:30–09:00","🏃 CORRIDA 30 min"],
+  2:["06:50–07:20","💪 CALISTENIA 20 min"],
+  3:["08:30–09:00","🏃 CORRIDA 30 min"],
+  4:["06:50–07:20","💪 CALISTENIA 20 min"],
+  5:["08:30–09:00","🏃 CORRIDA 30 min"],
+  6:["08:30–09:10","💪 CALISTENIA 20 min"],
+  0:["10:00","💪 CALISTENIA 20 min + revisão semanal 30 min"]
+};
+const TREINO_LABELS={
+  1:"Corrida 08:30",2:"Calistenia 06:50",3:"Corrida 08:30",
+  4:"Calistenia 06:50",5:"Corrida 08:30",6:"Calistenia 08:30",
+  0:"Calistenia + Revisão"
+};
+const CKS=[
+  "Água 1 — acordar",
+  "Água 2 — manhã",
+  "Água 3 — almoço",
+  "Água 4 — tarde",
+  "Treino do dia (corrida/casa)",
+  "Estudo 50 min (10:00–10:50)",
+  "Escola (19:00–22:20)",
+  "Tela off 23:00"
+];
+const CKS_META=["06:00","09:00","12:30","17:30","08:30/06:50","10:00","19:00","23:00"];
+
+/* ===== ESTADO ===== */
+const STORAGE_PREFIX="rot-";
+function todayKey(){const d=new Date();return STORAGE_PREFIX+d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function loadDay(){try{return JSON.parse(localStorage.getItem(todayKey())||"{}")}catch(e){return {}}}
+function saveDay(o){localStorage.setItem(todayKey(),JSON.stringify(o))}
+function loadAll(){
+  let total=0,done=0,streak=0,best=0;const keys=Object.keys(localStorage);
+  const today=new Date().toISOString().split("T")[0];
+  for(const k of keys){if(!k.startsWith(STORAGE_PREFIX))continue;
+    try{const o=JSON.parse(localStorage.getItem(k));const cnt=Object.values(o).filter(Boolean).length;total+=8;done+=cnt;
+      const d=k.slice(STORAGE_PREFIX.length);
+      if(d<=today && cnt===8){streak++}else if(cnt<8){streak=0}
+      best=Math.max(best,streak);
+    }catch(e){}
+  }
+  return {total,done,streak,best,weekPct:total?Math.round(done/total*100):0};
+}
+
+/* ===== RENDER ===== */
+const _DOW=new Date().getDay();
+const _DATE=new Date();
+console.log("[Rotina] DOW:",_DOW,"Date:",_DATE);
+function mkTL(d){
+  const t=BASE.map(([time,label])=>({time,label}));
+  if(d===6)return[["até 08:00","Acordar"],["08:30–09:10","💪 CALISTENIA 20 min"],["12:00–13:00","Curso"],["14:00–15:00","Bloco estudo maior"],["Tarde","Treino casa / livre"],["Noite","Livre"],["23:30","Dormir"]].map(([time,label])=>({time,label}));
+  if(d===0)return[["Livre o dia todo",""],["10:00","💪 CALISTENIA + revisão semanal 30 min"],["23:30","Dormir"]].map(([time,label])=>({time,label}));
+  const tr=DIA_TREINO[d];if(tr){const idx=BASE.findIndex(([t])=>t==="08:20");if(idx>=0)t.splice(idx+1,0,{time:tr[0],label:tr[1]});}
+  return t;
+}
+const TL=mkTL(_DOW);
+
+function render(){
+  const ds=String(_DATE.getDate()).padStart(2,"0")+"/"+String(_DATE.getMonth()+1).padStart(2,"0");
+  const label=_DOW===0?" • revisão + treino":_DOW===6?" • curso 12h + estudo 14h + treino":" • escola 19–22:20 • treino: "+(TREINO_LABELS[_DOW]||"—");
+  document.getElementById("dayName").textContent=DIAS[_DOW];
+  document.getElementById("todayDate").textContent=ds+label;
+
+  /* Timeline */
+  document.getElementById("timeline").innerHTML=TL.map((item,i)=>{
+    const now=_DATE.getHours()*60+_DATE.getMinutes();
+    const [h,m]=item.time.split(/[–:]/).map(Number);
+    const itemMin=(h||0)*60+(m||0);
+    const nxt=mkTL(_DOW)[i+1];
+    const cls=itemMin<=now&&(i===TL.length-1||nxt&&parseInt(String(nxt.time).split(/[–:]/)[0])*60>now)?"current":itemMin<now?"past":"";
+    return `<div class="timeline-item ${cls}"><span class="dot"></span><div class="time">${item.time}</div><div class="timeline-content"><div class="label">${item.label}</div></div></div>`;
+  }).join("");
+
+  /* Aulas */
+  document.getElementById("aulas").innerHTML=AULAS[_DOW]?AULAS[_DOW].map((a,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:.82rem"><span style="font-family:var(--font-mono);color:var(--warn);font-weight:700;min-width:28px">${i+1}ª</span><div><div class="subject-main">${a.split(" — ")[0]}</div><div class="subject-teacher">${a.split(" — ")[1]||""}</div></div></div>`).join(""):`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Sem aula hoje</div>`;
+
+  /* Checklist */
+  const s=loadDay();
+  const box=document.getElementById("cks");
+  box.innerHTML=CKS.map((c,i)=>`<label class="check-item ${s[i]?"done":""}" data-i="${i}"><input type="checkbox"${s[i]?" checked":""} hidden><div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><span class="check-label">${c}</span><span class="check-meta">${CKS_META[i]}</span></label>`).join("");
+  box.querySelectorAll("input[type=checkbox]").forEach(inp=>inp.addEventListener("change",e=>{const lbl=e.target.closest(".check-item");const i=lbl.dataset.i;const o=loadDay();o[i]=e.target.checked;saveDay(o);lbl.classList.toggle("done",e.target.checked);updateProgress();}));
+  updateProgress();
+
+  /* Stats */
+  const stats=loadAll();
+  document.getElementById("streak").textContent=stats.streak;
+  document.getElementById("weekPct").textContent=stats.weekPct+"%";
+  document.getElementById("best").textContent=stats.best;
+  document.getElementById("statsBar").style.display="grid";
+
+  /* Train grid */
+  const tg=document.getElementById("trainGrid");
+  const weeks=[{w:"1–2",label:"Base",items:["Flexão joelho/parede 3×8","Agachamento livre 3×12","Prancha 3×20s","Superman 3×15s","Ponte glúteo 3×12"]},{w:"3–4",label:"Volume",items:["Flexão padrão 3×8","Agachamento + salto 3×10","Prancha 3×30s","Superman 3×20s","Afundo estático 3×8/perna"]},{w:"5–6",label:"Intensidade",items:["Flexão fechada 3×8","Agach. búlgaro 3×8","Prancha 3×45s","Superman 3×30s","Flexão pike 3×6"]},{w:"7+",label:"Unilateral",items:["Flexão archer 3×5","Pistola assistida 3×5","Prancha 3×60s","Superman 3×45s","Core dinâmico 3×12"]}];
+  tg.innerHTML=weeks.map((w,wi)=>`<div class="train-card ${wi===0?"current":""}"><div class="train-day">Semanas ${w.w} — ${w.label}</div><div style="font-size:.65rem;color:var(--fg-sub);line-height:1.7">${w.items.map(x=>`• ${x}`).join("<br>")}</div></div>`).join("");
+
+  /* School table */
+  document.getElementById("schoolBody").innerHTML=Object.entries(AULAS).map(([d,arr])=>`<tr><td><strong>${DIAS[d].charAt(0).toUpperCase()+DIAS[d].slice(1,3)}</strong></td>${arr.map(a=>`<td><div class="subject-main">${a.split(" — ")[0]}</div><div class="subject-teacher">${a.split(" — ")[1]||""}</div></td>`).join("")}</tr>`).join("");
+
+  /* Tabs */
+  document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+}
+function switchTab(name){
+  document.querySelectorAll(".card").forEach(c=>c.classList.toggle("hidden",c.id!=="a-"+name));
+  document.querySelectorAll(".tab").forEach(b=>{b.classList.toggle("active",b.dataset.tab===name);b.setAttribute("aria-selected",b.dataset.tab===name)});
+}
+function updateProgress(){
+  const s=loadDay();const done=Object.values(s).filter(Boolean).length;const total=CKS.length;
+  document.getElementById("progressPct").textContent=Math.round(done/total*100)+"%";
+  document.getElementById("doneCount").textContent=done;
+  document.getElementById("totalCount").textContent=total;
+  document.getElementById("checkCount").textContent=done+"/"+total;
+  document.querySelectorAll(".check-item").forEach(el=>{const i=el.dataset.i;el.classList.toggle("done",!!s[i]);el.querySelector("input").checked=!!s[i]});
+}
+function clearToday(){if(confirm("Limpar checklist de hoje?")){localStorage.removeItem(todayKey());render();}}
+/* Init */
+render();
+console.log("[Rotina] Render completo");
+
+/* Service Worker para PWA */
+if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").catch(()=>{})}
+
+/* ===== CELULAR ===== */
+async function runCelularAction(action){
+  const out=document.getElementById("celularOutput");
+  out.textContent="Executando: "+action+"...";
+  if(action==="scrcpy"){
+    out.innerHTML="Execute no PC:<br><code>adb connect SEU_IP:5555 && scrcpy</code><br><br>Ou rode <code>C:\\Users\\alenc\\scripts_celular\\setup_adb_wifi.bat</code>";
+    return;
+  }
+  out.innerHTML="No Termux (celular), execute:<br><code>python /sdcard/scripts/organiza_celular.py "+action.replace("tema-escuro-ativar","tema-escuro --ativar").replace("tema-escuro-desativar","tema-escuro --desativar")+"</code>";
+}
+</script>
+</body>
+</html>
