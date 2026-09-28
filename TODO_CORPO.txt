@@ -1,0 +1,13 @@
+1. [x] Dashboard Corpo integrado como aba no index.html (cards + gráfico + check-in + coach)
+2. [x] corpo-historico.js com exames, fusão Bio, tendência e pontuação
+3. [x] corpo-tdee.js com algoritmo adaptativo estilo MacroFactor
+4. [x] corpo-jejum.js com timer flexível start/stop + planos
+5. [x] corpo-agua.js water tracker com meta auto 35ml/kg
+6. [x] corpo-gordura-formulas.js (no core: 5 fórmulas + média robusta)
+7. [x] corpo-coach.js semanal determinístico
+8. [x] corpo-diario.js (peso manhã, treino, refeições; soma com aba Nutri)
+9. [x] corpo-medidas.js circunferências + deltas (fotos: só metadados por enquanto)
+10. [x] corpo-export.js backup/restore JSON + CSV
+11. [x] Aba Corpo no index.html com lazy loading
+12. [ ] Seed dados InBody reais (aguardando exame do usuário — perfil default 83kg/cut ativo)
+13. [x] Fluxo testado via node (10/10 módulos) + servidor :8765 servindo tudo
