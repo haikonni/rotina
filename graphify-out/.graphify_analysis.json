@@ -1,0 +1,26 @@
+{
+  "communities": {
+    "0": [
+      "sw",
+      "sw_nucleo"
+    ]
+  },
+  "cohesion": {
+    "0": 1.0
+  },
+  "gods": [
+    {
+      "id": "sw_nucleo",
+      "label": "NUCLEO",
+      "degree": 1
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `NUCLEO` to the rest of the system?",
+      "why": "1 weakly-connected nodes found - possible documentation gaps or missing edges."
+    }
+  ]
+}

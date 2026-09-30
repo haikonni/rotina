@@ -18,7 +18,9 @@ const NUCLEO = [
   "./corpo/corpo-diario.js",
   "./corpo/corpo-medidas.js",
   "./corpo/corpo-coach.js",
-  "./corpo/corpo-export.js"
+  "./corpo/corpo-export.js",
+  "./nutri-off.js",
+  "./bio-pdf.js"
 ];
 const FONTES = /^https:\/\/fonts\.(googleapis|gstatic)\.com\//;
 
