@@ -437,6 +437,7 @@ tr:hover td{background:var(--bg-hover)}
     <button class="tab" role="tab" data-tab="bio" aria-selected="false" aria-controls="a-bio"><span>🧬 Bio</span></button>
     <button class="tab" role="tab" data-tab="corpo" aria-selected="false" aria-controls="a-corpo"><span>💪 Corpo</span></button>
     <button class="tab" role="tab" data-tab="estatisticas" aria-selected="false" aria-controls="a-estatisticas"><span>📊 Estatísticas</span></button>
+    <button class="tab" role="tab" data-tab="painel" aria-selected="false" aria-controls="a-painel"><span>🧭 Painel</span></button>
   </nav>
 
   <!-- HOJE -->
@@ -666,6 +667,25 @@ tr:hover td{background:var(--bg-hover)}
     </div>
   </section>
 
+  <!-- PAINEL DA VIDA -->
+  <section class="card hidden" id="a-painel" role="tabpanel" aria-labelledby="tab-painel">
+    <div class="card-header">
+      <div class="card-title"><span class="card-icon icon-accent" aria-hidden="true">🧭</span>Painel da Vida</div>
+    </div>
+    <p style="font-size:.7rem;color:var(--fg-sub);margin-bottom:var(--space);line-height:1.5">Nota 0–10 por área, 1x por semana (domingo). Média geral + histórico. Dados só no teu navegador.</p>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:var(--space)">
+      <div style="font-size:.75rem;color:var(--fg-sub)">Média geral</div>
+      <div style="font-size:1.5rem;font-weight:800;color:var(--accent);font-family:var(--font-mono)" id="painelMedia">—</div>
+      <div style="font-size:.7rem;color:var(--fg-sub)" id="painelData">sem notas ainda</div>
+    </div>
+    <div id="painelAreas" style="display:grid;gap:12px"></div>
+    <button class="btn btn-primary" style="margin-top:var(--space)" onclick="savePainel()">Salvar notas da semana</button>
+    <div style="margin-top:var(--space)">
+      <h4 style="font-size:.7rem;color:var(--fg-sub);margin-bottom:var(--space-sm);text-transform:uppercase;letter-spacing:.5px">Histórico (últimas semanas)</h4>
+      <div id="painelHist" style="display:grid;gap:6px;font-size:.75rem"></div>
+    </div>
+  </section>
+
   <p class="export-hint">
     App roda offline • Dados salvos no navegador •
     <a href="#" onclick="showLocalInfo();return false" style="color:var(--accent)">Acessar no celular na mesma rede</a>
@@ -835,10 +855,10 @@ const CKS_META=["06:00","09:00","12:30","17:30","08:30","10:00","19:00","23:00"]
 /* Treino ULPPL — Upper/Lower Força → Push/Pull/Legs Hipertrofia */
 const TREINO_FASES = {
   1: { // Segunda - Upper A Força
-    label: "Upper A (Força)",
+    label: "Upper A (Força) • foco dorsal/largura",
     items: [
-      "Supino Reto 4×4-6 (3')",
       "Barra Fixa/Puxada Frontal 4×4-6 (3')",
+      "Supino Reto 4×4-6 (3')",
       "Desenvolvimento Militar 3×5-6 (2'30\")",
       "Remada Curvada 3×5-6 (2'30\")",
       "Supino Inclinado 3×6-8 (2')",
@@ -872,13 +892,13 @@ const TREINO_FASES = {
     ]
   },
   4: { // Sexta - Pull Hipertrofia
-    label: "Pull (Hipertrofia)",
+    label: "Pull (Hipertrofia) • foco topo/meio costas",
     items: [
-      "Puxada Frontal/Barra Fixa 4×8-12 (2')",
       "Remada Baixa/Unilateral 4×10-12 (1'30\")",
-      "Puxada Supinada/Neutra 3×10-12 (1'30\")",
       "Face Pull Rotação Externa 4×15-20 (1')",
       "Remada Cavalinho/Machine 3×10-12 (1'30\")",
+      "Puxada Frontal/Barra Fixa 4×8-12 (2')",
+      "Puxada Supinada/Neutra 3×10-12 (1'30\")",
       "Rosca Direta EZ/Cabo 3×10-12 (1'30\")",
       "Rosca Martelo/Concentrada 2×12-15 (1')",
       "Pullover Cabo/Máquina 2×12-15 (1')"
@@ -1008,6 +1028,7 @@ function render(){
 
   /* Tabs */
   document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+  try{renderPainel()}catch(e){console.log("[Painel]",e.message)}
 }
 function switchTab(name){
   document.querySelectorAll(".card").forEach(c=>c.classList.toggle("hidden",c.id!=="a-"+name));
@@ -1025,6 +1046,34 @@ function updateProgress(){
   const ring=document.getElementById("progressRing");if(ring)ring.style.strokeDashoffset=138*(1-done/total);
 }
 function clearToday(){if(confirm("Limpar checklist de hoje?")){localStorage.removeItem(todayKey());render();}}
+
+/* ===== PAINEL DA VIDA ===== */
+const PAINEL_AREAS=["Saúde","Treino","Sono","Estudo","Escola","Família","Dinheiro","Fé","Lazer","Organização"];
+const PAINEL_PREFIX="rot-painel-";
+function painelWeekKey(){const d=new Date();const onejan=new Date(d.getFullYear(),0,1);const w=Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7);return PAINEL_PREFIX+d.getFullYear()+"-S"+String(w).padStart(2,"0");}
+function loadPainel(){try{return JSON.parse(localStorage.getItem(painelWeekKey())||"{}")}catch(e){return {}}}
+function loadPainelHist(){const out=[];for(let i=0;i<52;i++){try{const v=localStorage.getItem(PAINEL_PREFIX+"hist-"+i);if(v)out.push(JSON.parse(v))}catch(e){}}return out.reverse();}
+function renderPainel(){
+  const cur=loadPainel();
+  document.getElementById("painelAreas").innerHTML=PAINEL_AREAS.map((a,i)=>{
+    const v=cur[i]??5;
+    return `<div><div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:4px"><span>${a}</span><strong id="painelV${i}" style="font-family:var(--font-mono);color:var(--accent)">${v}</strong></div><input type="range" min="0" max="10" step="1" value="${v}" data-i="${i}" class="painelRange" style="width:100%" oninput="document.getElementById('painelV${i}').textContent=this.value;painelLiveMedia()"></div>`;
+  }).join("");
+  painelLiveMedia();
+  const hist=[];
+  for(let w=0;w<12;w++){const d=new Date();d.setDate(d.getDate()-w*7);const onejan=new Date(d.getFullYear(),0,1);const wn=Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7);const k=PAINEL_PREFIX+d.getFullYear()+"-S"+String(wn).padStart(2,"0");try{const o=JSON.parse(localStorage.getItem(k)||"null");if(o&&Object.keys(o).length){const vals=PAINEL_AREAS.map((_,i)=>o[i]??0);const m=(vals.reduce((x,y)=>x+y,0)/vals.length).toFixed(1);hist.push(`<div style="display:flex;justify-content:space-between;padding:6px 8px;border:1px solid var(--border);border-radius:8px"><span>Semana ${wn}/${d.getFullYear()}</span><strong style="color:var(--accent)">${m}</strong></div>`);}}catch(e){}}
+  document.getElementById("painelHist").innerHTML=hist.length?hist.join(""):`<div style="font-size:.75rem;color:var(--fg-sub)">Nenhuma semana salva ainda. Dê as notas e salve.</div>`;
+}
+function painelLiveMedia(){
+  const vals=[...document.querySelectorAll(".painelRange")].map(r=>Number(r.value));
+  const m=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):"—";
+  document.getElementById("painelMedia").textContent=m;
+  const d=new Date();document.getElementById("painelData").textContent="semana atual • "+String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();
+}
+function savePainel(){
+  const o={};document.querySelectorAll(".painelRange").forEach(r=>{o[r.dataset.i]=Number(r.value)});
+  localStorage.setItem(painelWeekKey(),JSON.stringify(o));renderPainel();painelLiveMedia();
+}
 
 /* ===== CELULAR ===== */
 async function runCelularAction(action){
